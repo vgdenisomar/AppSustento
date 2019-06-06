@@ -4,6 +4,8 @@ import {
   createAppContainer
 } from 'react-navigation';
 
+
+
 import { Animated, Easing, Platform } from 'react-native';
 
 import Login from './src/pages/Login'
@@ -53,7 +55,6 @@ Home:{
 {
   transitionConfig: () => fromRight()
 }
-
 );
 
 const App = createAppContainer(RootStack);

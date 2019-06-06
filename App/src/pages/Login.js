@@ -5,11 +5,15 @@ import {
   View,
   StatusBar ,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  AsyncStorage
 } from 'react-native';
+
+import {YellowBox} from 'react-native';
 
 import Logo from '../components/Logo';
 import Form from '../components/Form';
+
 
 import {Actions} from 'react-native-router-flux';
 
@@ -26,12 +30,28 @@ export default class Login extends Component {
 constructor(props){
     super(props)
     this.state={
+        email:'',
+        pass:'',
         UserEmail:'',
         UserPassword:''
     }
 }
+componentDidMount=async()=> {
+  let myArray = await AsyncStorage.getItem('myArray');
+  let d = JSON.parse(myArray);
+  this.setState({
+    UserEmail:d.UserEmail,
+    UserPassword:d.UserPassword
+  })
+}
     login=()=>{
         const {UserEmail,UserPassword}=this.state;
+        let myArray={
+          UserEmail: UserEmail,
+          UserPassword: UserPassword
+        }
+        AsyncStorage.setItem('myArray',
+        JSON.stringify(myArray));
         fetch('http://sustento.000webhostapp.com/sesion.php',{
             method:'post',
             header:{
@@ -63,6 +83,7 @@ constructor(props){
     });
     }
 	render() {
+    YellowBox.ignoreWarnings(['Warning: Async Storage has been extracted from react-native core']);  // <- insert the warning text here you wish to hide. 
 		return(
 			<View style={styles.container}>
 				<Logo/>
@@ -74,6 +95,7 @@ constructor(props){
                 selectionColor="#000"
                 keyboardType="email-address"
                 onSubmitEditing={()=> this.password.focus()}
+                value={this.state.UserEmail}
                  />
              <TextInput style={styles.inputBox} 
                 onChangeText={UserPassword=>this.setState({UserPassword})}
@@ -82,6 +104,7 @@ constructor(props){
                 secureTextEntry={true}
                 placeholderTextColor = "#000"
                 ref={(input) => this.password = input}
+                value={this.state.UserPassword}
                 />  
             <TouchableOpacity style={styles.button} onPress={this.login}>
                 <Text style={styles.buttonText} onPress={this.login}>Ingresar</Text>
